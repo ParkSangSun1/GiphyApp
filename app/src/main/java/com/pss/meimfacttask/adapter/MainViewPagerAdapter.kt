@@ -1,9 +1,11 @@
-package com.pss.meimfacttask
+package com.pss.meimfacttask.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.pss.meimfacttask.view.FavoriteFragment
+import com.pss.meimfacttask.view.MainFragment
 
 class MainViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {

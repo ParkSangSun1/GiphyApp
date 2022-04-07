@@ -1,9 +1,11 @@
-package com.pss.meimfacttask
+package com.pss.meimfacttask.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.tabs.TabLayoutMediator
+import com.pss.meimfacttask.adapter.MainViewPagerAdapter
+import com.pss.meimfacttask.R
 import com.pss.meimfacttask.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
