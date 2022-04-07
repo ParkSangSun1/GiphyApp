@@ -1,4 +1,4 @@
-package com.pss.meimfacttask.data.api.model
+package com.pss.meimfacttask.data.model
 
 data class Pagination(
     val count: Int,
