@@ -1,5 +1,5 @@
 package com.pss.meimfacttask.data.model
 
 data class Images(
-    val original: Original
+    val fixed_width: FixedWidth
 )
