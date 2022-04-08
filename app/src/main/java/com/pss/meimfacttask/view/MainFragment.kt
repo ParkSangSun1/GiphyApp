@@ -1,24 +1,34 @@
 package com.pss.meimfacttask.view
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.pss.meimfacttask.R
+import com.pss.meimfacttask.adapter.GiphyListAdapter
+import com.pss.meimfacttask.databinding.FragmentMainBinding
+import com.pss.meimfacttask.extension.showVertical
+import com.pss.meimfacttask.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
-class MainFragment : Fragment() {
+class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
+    private val mainViewModel by activityViewModels<MainViewModel>()
+    private lateinit var giphyListAdapter : GiphyListAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun init() {
+        initRecyclerView()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+    private fun initRecyclerView(){
+        giphyListAdapter = GiphyListAdapter()
+
+        binding.recyclerView.adapter = giphyListAdapter
+        binding.recyclerView.showVertical(requireContext())
+
+
+        lifecycleScope.launch {
+            mainViewModel.getGiphyGifs().collect {
+                giphyListAdapter.submitData(it)
+            }
+        }
     }
 }

@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
         "Home",
         "Favorite"
     )
-    private val mainViewModel by viewModels<MainViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +32,5 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(mainTabLayout, mainViewPager) { tab, position ->
             tab.text = tabTitleArray[position]
         }.attach()
-
-        mainViewModel.getGiphyGifs()
     }
 }

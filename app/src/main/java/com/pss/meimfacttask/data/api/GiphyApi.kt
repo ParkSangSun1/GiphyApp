@@ -12,7 +12,7 @@ interface GiphyApi {
     @GET(END_URL)
     suspend fun getGiphyGifs(
         @Query("api_key") key: String = GIPHY_API_KEY,
-        @Query("limit") limit: Int,
+        @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int,
         @Query("lang") lang: String = "ko",
         @Query("bundle") bundle: String = "clips_grid_picker"
