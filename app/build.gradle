@@ -76,12 +76,13 @@ dependencies {
     def paging_version = "3.1.0"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
-    //cardView
-    implementation 'androidx.cardview:cardview:1.0.0'
-
     //glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     kapt "android.arch.lifecycle:compiler:1.1.1"
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    //Room
+    implementation 'androidx.room:room-runtime:2.4.2'
+    annotationProcessor 'androidx.room:room-compiler:2.4.2'
 }
