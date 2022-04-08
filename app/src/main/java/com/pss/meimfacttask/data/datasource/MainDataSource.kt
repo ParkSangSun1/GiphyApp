@@ -18,11 +18,11 @@ class MainDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Data> {
         return try {
             val page = params.key?: 1
-            val results = giphyApi.getGiphyGifs(offset = page)
+            val results = giphyApi.getGiphyGifs(offset = page*20)
             val resultsDataList = mutableListOf<Data>()
             val resultsData = results.body()?.data ?: emptyList()
             resultsDataList.addAll(resultsData)
-
+            Log.d("로그","페이징 : $page, $results")
             LoadResult.Page(data = resultsData, nextKey = page.plus(1), prevKey = if (page == 1) null else -1)
         }
         catch (e: Exception) {
