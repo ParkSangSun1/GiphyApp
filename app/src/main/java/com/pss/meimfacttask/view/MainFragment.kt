@@ -19,7 +19,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun initRecyclerView(){
-        giphyListAdapter = GiphyListAdapter()
+        giphyListAdapter = GiphyListAdapter(requireContext())
 
         binding.recyclerView.adapter = giphyListAdapter
         binding.recyclerView.showVertical(requireContext())

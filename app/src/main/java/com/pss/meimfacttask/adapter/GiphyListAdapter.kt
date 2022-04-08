@@ -1,16 +1,21 @@
 package com.pss.meimfacttask.adapter
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.pss.meimfacttask.R
 import com.pss.meimfacttask.data.model.Data
 import com.pss.meimfacttask.databinding.GiphyListItemBinding
+import com.pss.meimfacttask.di.GlideApp
 
-class GiphyListAdapter :
+class GiphyListAdapter(
+    private val context : Context
+) :
     PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(diffCallback) {
 
 
@@ -42,6 +47,8 @@ class GiphyListAdapter :
     override fun onBindViewHolder(holder: GiphyListViewHolder, position: Int) {
         val item = getItem(position) ?: return
         holder.onBind(item)
+
+        GlideApp.with(context).asGif().load(item.images.original.url).into(holder.binding.gifImgView)
     }
 
 

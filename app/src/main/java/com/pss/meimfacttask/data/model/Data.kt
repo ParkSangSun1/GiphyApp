@@ -1,6 +1,6 @@
 package com.pss.meimfacttask.data.model
 
 data class Data(
-    val embed_url: String,
-    val id : String
+    val id : String,
+    val images: Images
 )
