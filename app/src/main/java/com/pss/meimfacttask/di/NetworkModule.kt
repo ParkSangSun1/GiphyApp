@@ -1,7 +1,7 @@
 package com.pss.meimfacttask.di
 
 import com.pss.meimfacttask.Utils.BASE_URL
-import com.pss.meimfacttask.data.api.GiphyApi
+import com.pss.meimfacttask.data.remote.api.GiphyApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

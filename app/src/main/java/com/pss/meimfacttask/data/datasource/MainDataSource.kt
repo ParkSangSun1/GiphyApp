@@ -3,9 +3,8 @@ package com.pss.meimfacttask.data.datasource
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.pss.meimfacttask.data.api.GiphyApi
-import com.pss.meimfacttask.data.model.Data
-import com.pss.meimfacttask.data.model.GiphyResponse
+import com.pss.meimfacttask.data.remote.api.GiphyApi
+import com.pss.meimfacttask.data.remote.model.Data
 
 class MainDataSource(
     private val giphyApi: GiphyApi

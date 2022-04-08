@@ -1,8 +1,8 @@
-package com.pss.meimfacttask.data.api
+package com.pss.meimfacttask.data.remote.api
 
 import com.pss.meimfacttask.Utils.END_URL
 import com.pss.meimfacttask.Utils.GIPHY_API_KEY
-import com.pss.meimfacttask.data.model.GiphyResponse
+import com.pss.meimfacttask.data.remote.model.GiphyResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

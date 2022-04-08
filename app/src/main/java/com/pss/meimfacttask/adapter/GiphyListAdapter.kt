@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.pss.meimfacttask.data.model.Data
+import com.pss.meimfacttask.data.remote.model.Data
 import com.pss.meimfacttask.databinding.GiphyListItemBinding
 import com.pss.meimfacttask.di.GlideApp
 
@@ -43,7 +43,7 @@ class GiphyListAdapter(
 
     override fun onBindViewHolder(holder: GiphyListViewHolder, position: Int) {
         val item = getItem(position) ?: return
-        holder.onBind(item)
+        //holder.onBind(item)
 
         GlideApp.with(context).asGif().load(item.images.fixed_width.url).into(holder.binding.gifImgView)
     }
@@ -51,8 +51,8 @@ class GiphyListAdapter(
 
     inner class GiphyListViewHolder(val binding: GiphyListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun onBind(data: Data) {
+     /*   fun onBind(data: Data) {
             binding.data = data
-        }
+        }*/
     }
 }

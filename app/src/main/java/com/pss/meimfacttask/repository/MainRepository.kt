@@ -1,14 +1,11 @@
-package com.pss.meimfacttask.data.repository
+package com.pss.meimfacttask.repository
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import com.pss.meimfacttask.data.api.GiphyApi
+import com.pss.meimfacttask.data.remote.api.GiphyApi
 import com.pss.meimfacttask.data.datasource.MainDataSource
-import com.pss.meimfacttask.data.model.Data
-import com.pss.meimfacttask.data.model.GiphyResponse
+import com.pss.meimfacttask.data.remote.model.Data
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
