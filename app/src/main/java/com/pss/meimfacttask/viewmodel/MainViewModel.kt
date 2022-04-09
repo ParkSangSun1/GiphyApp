@@ -17,6 +17,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val mainRepository: MainRepository
 ) : ViewModel() {
+    lateinit var favoriteGifList : List<FavoriteGif>
+
 
     fun getGiphyGifs(): Flow<PagingData<Data>> {
         return mainRepository.getGiphyGifs().cachedIn(viewModelScope)

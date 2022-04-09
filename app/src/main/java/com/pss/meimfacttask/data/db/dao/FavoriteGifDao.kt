@@ -13,4 +13,7 @@ interface FavoriteGifDao {
 
     @Query("SELECT * FROM FavoriteGif WHERE gifId = :gifId")
     fun favoriteGifSelect(gifId : String) : List<FavoriteGif>
+
+    @Query("SELECT * FROM FavoriteGif")
+    fun favoriteGifAllSelectAndGet() : List<FavoriteGif>
 }

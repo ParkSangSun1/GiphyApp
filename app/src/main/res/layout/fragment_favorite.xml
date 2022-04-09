@@ -11,12 +11,11 @@
         android:layout_height="match_parent"
         tools:context=".view.FavoriteFragment">
 
-        <ImageView
-            android:id="@+id/img"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favorite_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@mipmap/ic_launcher"
-            />
+            tools:listitem="@layout/giphy_list_item"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
