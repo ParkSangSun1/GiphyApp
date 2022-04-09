@@ -8,9 +8,9 @@ interface FavoriteGifDao {
     @Insert
     fun favoriteGifInsert(favoriteGif: FavoriteGif)
 
-    @Delete
-    fun favoriteGifDelete(favoriteGif: FavoriteGif)
+    @Query("DELETE FROM FavoriteGif WHERE gifId = :gifId")
+    fun favoriteGifDelete(gifId : String)
 
-    @Query("SELECT * FROM FavoriteGif WHERE gifId = :id")
-    fun favoriteGifSelect(id : String) : List<FavoriteGif>
+    @Query("SELECT * FROM FavoriteGif WHERE gifId = :gifId")
+    fun favoriteGifSelect(gifId : String) : List<FavoriteGif>
 }

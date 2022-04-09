@@ -14,6 +14,6 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
 
 
     override fun init() {
-        GlideApp.with(requireContext()).asGif().load("https://media2.giphy.com/media/H2ji6uHAG9aJs7q3WB/giphy.gif?cid=4a972375mohtr8xdjndpih07vytj8s1sj52ak0i3pyyrw5tl&rid=giphy.gif&ct=g").into(binding.img)
+        GlideApp.with(requireContext()).asGif().load("https://media4.giphy.com/media/cnYo9a9IYylHph7QPC/200w.gif?cid=4a972375a963t9rdoj60f8mdxo3e47z8tzfh27lilvgi7r51&rid=200w.gif&ct=g").into(binding.img)
     }
 }

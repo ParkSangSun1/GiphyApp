@@ -17,7 +17,7 @@ import kotlinx.coroutines.*
 
 
 class GiphyListAdapter(
-    private val context : Context
+    private val context: Context
 ) :
     PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(diffCallback) {
     val db = FavoriteGifDatabase.getInstance(context.applicationContext)
@@ -50,39 +50,75 @@ class GiphyListAdapter(
 
     override fun onBindViewHolder(holder: GiphyListViewHolder, position: Int) {
         val item = getItem(position) ?: return
-        checkFavoriteGif(holder = holder, item = item)
-        Log.d("로그","item : $position")
 
-        GlideApp.with(context).asGif().load(item.images.fixed_width.url).into(holder.binding.gifImgView)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            checkFavoriteGif(holder = holder, item = item)
+        }
+
+        GlideApp.with(context).asGif().load(item.images.fixed_width.url)
+            .into(holder.binding.gifImgView)
+        Log.d("로그", "item : $position")
+
+
 
         holder.binding.heartBtn.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                launch {
-                    insertFavoriteGif(item = item)
-                }.join()
+                val favoriteState = withContext(Dispatchers.IO) {
+                    checkFavoriteGif(holder = holder, item = item)
+                }
+                Log.d("로그", "클릭 후 favoriteState : $favoriteState")
+
+
+                //favorite 상태에 따라 toggle 로직
+                if (favoriteState) {
+                    withContext(Dispatchers.IO) {
+                        deleteFavoriteGif(item = item)
+                    }
+                } else {
+                    withContext(Dispatchers.IO) {
+                        insertFavoriteGif(item = item)
+                    }
+                }
+
                 checkFavoriteGif(holder = holder, item = item)
             }
         }
+
     }
 
     //Favorite 눌려있는지 확인
-    private fun checkFavoriteGif(holder : GiphyListViewHolder, item: Data) {
-        CoroutineScope(Dispatchers.Main).launch {
-            val gifList = withContext(Dispatchers.Default) {
+    private suspend fun checkFavoriteGif(holder: GiphyListViewHolder, item: Data): Boolean {
+        var favoriteState = CoroutineScope(Dispatchers.Main).async {
+            val gifList = withContext(Dispatchers.IO) {
                 db!!.favoriteGifDao().favoriteGifSelect(item.id)
             }
-            if (gifList.isNullOrEmpty()) holder.binding.heartBtn.setImageResource(R.drawable.heart_thin)
-            else holder.binding.heartBtn.setImageResource(R.drawable.heart)
+            if (gifList.isNullOrEmpty()) {
+                holder.binding.heartBtn.setImageResource(R.drawable.heart_thin)
+                false
+            } else {
+                holder.binding.heartBtn.setImageResource(R.drawable.heart)
+                true
+            }
         }
+        return favoriteState.await()
     }
 
-    private suspend fun insertFavoriteGif(item : Data){
-        db!!.favoriteGifDao().favoriteGifInsert(FavoriteGif(gifId = item.id, url = item.images.fixed_width.url))
+    //favorite 추가
+    private fun insertFavoriteGif(item: Data) {
+        db!!.favoriteGifDao()
+            .favoriteGifInsert(FavoriteGif(gifId = item.id, url = item.images.fixed_width.url))
+    }
+
+    //favorite 삭제
+    private fun deleteFavoriteGif(item: Data) {
+        db!!.favoriteGifDao()
+            .favoriteGifDelete(item.id)
     }
 
 
     inner class GiphyListViewHolder(val binding: GiphyListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        }
+    }
 }
