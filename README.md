@@ -2,7 +2,8 @@
 ### Use stack
 - Retrofit & Okhttp
 - Dagger hilt
-- Coroutines
-- Paging3 & ViewPager
+- Coroutines & Flow
+- Paging3 & ViewPager2
 - Glide
 - Room
+- MVVM
