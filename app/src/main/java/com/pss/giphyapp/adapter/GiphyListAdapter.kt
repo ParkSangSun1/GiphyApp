@@ -14,11 +14,13 @@ import com.pss.giphyapp.data.remote.model.Data
 import com.pss.giphyapp.databinding.GiphyListItemBinding
 import com.pss.giphyapp.di.GlideApp
 import com.pss.giphyapp.utils.GiphyDiffUtilCallback
+import com.pss.giphyapp.viewmodel.MainViewModel
 import kotlinx.coroutines.*
 
 
 class GiphyListAdapter(
-    private val context: Context
+    private val context: Context,
+    private val mainViewModel: MainViewModel
 ) :
     PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(GiphyDiffUtilCallback()) {
     val db = FavoriteGifDatabase.getInstance(context.applicationContext)
@@ -68,6 +70,13 @@ class GiphyListAdapter(
                         insertFavoriteGif(item = item)
                     }
                 }
+
+
+                val data = withContext(Dispatchers.IO) {
+                    db!!.favoriteGifDao().favoriteGifAllSelectAndGet()
+                }
+
+                mainViewModel.callAdapterDataReset(data)
 
                 checkFavoriteGif(holder = holder, item = item)
             }

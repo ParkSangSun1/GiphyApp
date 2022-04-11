@@ -18,7 +18,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
     }
 
     private fun initRecyclerView(){
-        giphyListAdapter = GiphyListAdapter(requireContext())
+        giphyListAdapter = GiphyListAdapter(requireContext(), mainViewModel)
         binding.recyclerView.adapter = giphyListAdapter
         binding.recyclerView.showGrid(requireContext())
         binding.recyclerView.setHasFixedSize(true)
