@@ -1,4 +1,4 @@
-package com.pss.giphyapp
+package com.pss.giphyapp.utils
 
 object Utils {
     const val BASE_URL = "https://api.giphy.com"

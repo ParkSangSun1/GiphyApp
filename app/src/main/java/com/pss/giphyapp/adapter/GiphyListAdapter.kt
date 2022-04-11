@@ -13,27 +13,15 @@ import com.pss.giphyapp.data.db.entity.FavoriteGif
 import com.pss.giphyapp.data.remote.model.Data
 import com.pss.giphyapp.databinding.GiphyListItemBinding
 import com.pss.giphyapp.di.GlideApp
+import com.pss.giphyapp.utils.GiphyDiffUtilCallback
 import kotlinx.coroutines.*
 
 
 class GiphyListAdapter(
     private val context: Context
 ) :
-    PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(diffCallback) {
+    PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(GiphyDiffUtilCallback()) {
     val db = FavoriteGifDatabase.getInstance(context.applicationContext)
-
-
-    companion object {
-        val diffCallback = object : DiffUtil.ItemCallback<Data>() {
-            override fun areItemsTheSame(oldItem: Data, newItem: Data): Boolean {
-                return oldItem.id == newItem.id
-            }
-
-            override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
-                return oldItem == newItem
-            }
-        }
-    }
 
 
     override fun onCreateViewHolder(
@@ -89,7 +77,7 @@ class GiphyListAdapter(
 
     //Favorite 눌려있는지 확인
     private suspend fun checkFavoriteGif(holder: GiphyListViewHolder, item: Data): Boolean {
-        var favoriteState = CoroutineScope(Dispatchers.Main).async {
+        val favoriteState = CoroutineScope(Dispatchers.Main).async {
             val gifList = withContext(Dispatchers.IO) {
                 db!!.favoriteGifDao().favoriteGifSelect(item.id)
             }

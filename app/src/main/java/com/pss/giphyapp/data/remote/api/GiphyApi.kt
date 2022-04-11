@@ -1,7 +1,7 @@
 package com.pss.giphyapp.data.remote.api
 
-import com.pss.giphyapp.Utils.END_URL
-import com.pss.giphyapp.Utils.GIPHY_API_KEY
+import com.pss.giphyapp.utils.Utils.END_URL
+import com.pss.giphyapp.utils.Utils.GIPHY_API_KEY
 import com.pss.giphyapp.data.remote.model.GiphyResponse
 import retrofit2.Response
 import retrofit2.http.GET

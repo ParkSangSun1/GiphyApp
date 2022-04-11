@@ -1,6 +1,6 @@
 package com.pss.giphyapp.di
 
-import com.pss.giphyapp.Utils.BASE_URL
+import com.pss.giphyapp.utils.Utils.BASE_URL
 import com.pss.giphyapp.data.remote.api.GiphyApi
 import dagger.Module
 import dagger.Provides
