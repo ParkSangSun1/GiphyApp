@@ -14,7 +14,7 @@ import com.pss.giphyapp.data.db.entity.FavoriteGif
 import com.pss.giphyapp.data.remote.model.Data
 import com.pss.giphyapp.databinding.GiphyListItemBinding
 import com.pss.giphyapp.di.GlideApp
-import com.pss.giphyapp.utils.FavoriteGifDiffUtilCallback
+import com.pss.giphyapp.utils.FavoriteDiffUtilCallback
 import com.pss.giphyapp.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,18 +24,11 @@ import kotlinx.coroutines.withContext
 class FavoriteGifListAdapter(
     private val mainViewModel: MainViewModel,
     private val context: Context
-) : ListAdapter<FavoriteGif, FavoriteGifListAdapter.FavoriteGifListViewHolder>(diffUtil) {
+) : ListAdapter<FavoriteGif, FavoriteGifListAdapter.FavoriteGifListViewHolder>(
+    FavoriteDiffUtilCallback()
+) {
     val db = FavoriteGifDatabase.getInstance(context.applicationContext)
 
-    companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<FavoriteGif>() {
-            override fun areContentsTheSame(oldItem: FavoriteGif, newItem: FavoriteGif) =
-                oldItem == newItem
-
-            override fun areItemsTheSame(oldItem: FavoriteGif, newItem: FavoriteGif) =
-                oldItem.gifId == newItem.gifId
-        }
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
