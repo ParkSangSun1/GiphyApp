@@ -37,6 +37,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>(R.layout.fragment
         }
     }
 
+    //Home heart check -> Favorite add item
     private fun observeViewModel(){
         mainViewModel.favoriteGifList.observe(this, Observer{
             Log.d("로그","데이터 변동 : $it")

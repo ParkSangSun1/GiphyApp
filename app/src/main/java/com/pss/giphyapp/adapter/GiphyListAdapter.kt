@@ -1,7 +1,6 @@
 package com.pss.giphyapp.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -21,7 +20,7 @@ import kotlinx.coroutines.*
 
 class GiphyListAdapter(
     private val context: Context,
-    private val fragment : Fragment,
+    private val fragment: Fragment,
     private val mainViewModel: MainViewModel
 ) :
     PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(GiphyDiffUtilCallback()) {
@@ -42,59 +41,31 @@ class GiphyListAdapter(
 
     override fun onBindViewHolder(holder: GiphyListViewHolder, position: Int) {
         val item = getItem(position) ?: return
+
         observeViewModel(holder, item)
+
+        holder.bind(item)
+
+        //초기 favorite 상태 가져오기
         CoroutineScope(Dispatchers.IO).launch {
-            checkFavoriteGifInRoom(holder = holder, item = item)
+            checkFavoriteGifInRoom(binding = holder.binding, item = item)
         }
 
+        //Gif 로드
         GlideApp.with(context).asGif().load(item.images.fixed_width.url)
             .into(holder.binding.gifImgView)
-        Log.d("로그", "item : $position")
-
-
-
-        holder.binding.heartBtn.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val favoriteState = withContext(Dispatchers.IO) {
-                    checkFavoriteGifInRoom(holder = holder, item = item)
-                }
-                Log.d("로그", "클릭 후 favoriteState : $favoriteState")
-
-
-                //favorite 상태에 따라 toggle 로직
-                if (favoriteState) {
-                    withContext(Dispatchers.IO) {
-                        deleteFavoriteGif(item = item)
-                    }
-                } else {
-                    withContext(Dispatchers.IO) {
-                        insertFavoriteGif(item = item)
-                    }
-                }
-
-
-                val data = withContext(Dispatchers.IO) {
-                    db!!.favoriteGifDao().favoriteGifAllSelectAndGet()
-                }
-
-                mainViewModel.callAdapterDataReset(data)
-
-                checkFavoriteGifInRoom(holder = holder, item = item)
-            }
-        }
-
     }
 
-    private fun observeViewModel(holder: GiphyListViewHolder, item: Data){
+    //Favorite 상태 관찰
+    private fun observeViewModel(holder: GiphyListViewHolder, item: Data) {
         mainViewModel.favoriteGifList.observe(fragment, Observer {
             if (checkFavoriteGifInList(item = item)) holder.binding.heartBtn.setImageResource(R.drawable.heart)
             else holder.binding.heartBtn.setImageResource(R.drawable.heart_thin)
-
         })
     }
 
     //Favorite 눌려있는지 확인 (ViewModel list 에서)
-    private fun checkFavoriteGifInList(item: Data) : Boolean{
+    private fun checkFavoriteGifInList(item: Data): Boolean {
         var checkId = false
         mainViewModel.favoriteGifList.value?.forEach {
             if (it.gifId == item.id) checkId = true
@@ -102,38 +73,72 @@ class GiphyListAdapter(
         return checkId
     }
 
-    //Favorite 눌려있는지 확인 (Room DB 에서)
-    private suspend fun checkFavoriteGifInRoom(holder: GiphyListViewHolder, item: Data): Boolean {
+    //Favorite 눌려있는지 확인 (Room DB)
+    private suspend fun checkFavoriteGifInRoom(binding: GiphyListItemBinding, item: Data): Boolean {
         val favoriteState = CoroutineScope(Dispatchers.Main).async {
             val gifList = withContext(Dispatchers.IO) {
                 db!!.favoriteGifDao().favoriteGifSelect(item.id)
             }
             if (gifList.isNullOrEmpty()) {
-                holder.binding.heartBtn.setImageResource(R.drawable.heart_thin)
+                binding.heartBtn.setImageResource(R.drawable.heart_thin)
                 false
             } else {
-                holder.binding.heartBtn.setImageResource(R.drawable.heart)
+                binding.heartBtn.setImageResource(R.drawable.heart)
                 true
             }
         }
         return favoriteState.await()
     }
 
-    //favorite 추가
-    private fun insertFavoriteGif(item: Data) {
+    //favorite 추가 (Room DB)
+    private fun insertFavoriteGifInRoom(item: Data) {
         db!!.favoriteGifDao()
             .favoriteGifInsert(FavoriteGif(gifId = item.id, url = item.images.fixed_width.url))
     }
 
-    //favorite 삭제
-    private fun deleteFavoriteGif(item: Data) {
+    //favorite 삭제 (Room DB)
+    private fun deleteFavoriteGifInRoom(item: Data) {
         db!!.favoriteGifDao()
             .favoriteGifDelete(item.id)
     }
 
+    //heart button 클릭 시
+    private fun heartBtnClick(binding: GiphyListItemBinding, item: Data) {
+        CoroutineScope(Dispatchers.IO).launch {
+
+            //favorite 현재 상태 확인
+            val favoriteState = withContext(Dispatchers.IO) {
+                checkFavoriteGifInRoom(binding = binding, item = item)
+            }
+
+            //favorite 상태에 따라 toggle 로직
+            withContext(Dispatchers.IO) {
+                if (favoriteState) deleteFavoriteGifInRoom(item = item)
+                else insertFavoriteGifInRoom(item = item)
+            }
+
+            //순차적으로 삭제/ 추가 후 전체 Room data 가져오기
+            val data = withContext(Dispatchers.IO) {
+                db!!.favoriteGifDao().favoriteGifAllSelectAndGet()
+            }
+
+            //Favorite add item
+            mainViewModel.callAdapterDataReset(data)
+
+            checkFavoriteGifInRoom(binding = binding, item = item)
+        }
+    }
 
     inner class GiphyListViewHolder(val binding: GiphyListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        fun bind(item : Data?){
+            binding.heartBtn.setOnClickListener {
+                if (item != null) heartBtnClick(
+                    binding = binding,
+                    item = item
+                )
+            }
+        }
     }
 }
