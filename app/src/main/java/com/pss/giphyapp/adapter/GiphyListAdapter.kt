@@ -4,8 +4,9 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.pss.giphyapp.R
 import com.pss.giphyapp.data.db.FavoriteGifDatabase
@@ -20,6 +21,7 @@ import kotlinx.coroutines.*
 
 class GiphyListAdapter(
     private val context: Context,
+    private val fragment : Fragment,
     private val mainViewModel: MainViewModel
 ) :
     PagingDataAdapter<Data, GiphyListAdapter.GiphyListViewHolder>(GiphyDiffUtilCallback()) {
@@ -40,10 +42,9 @@ class GiphyListAdapter(
 
     override fun onBindViewHolder(holder: GiphyListViewHolder, position: Int) {
         val item = getItem(position) ?: return
-
-
+        observeViewModel(holder, item)
         CoroutineScope(Dispatchers.IO).launch {
-            checkFavoriteGif(holder = holder, item = item)
+            checkFavoriteGifInRoom(holder = holder, item = item)
         }
 
         GlideApp.with(context).asGif().load(item.images.fixed_width.url)
@@ -55,7 +56,7 @@ class GiphyListAdapter(
         holder.binding.heartBtn.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val favoriteState = withContext(Dispatchers.IO) {
-                    checkFavoriteGif(holder = holder, item = item)
+                    checkFavoriteGifInRoom(holder = holder, item = item)
                 }
                 Log.d("로그", "클릭 후 favoriteState : $favoriteState")
 
@@ -78,14 +79,31 @@ class GiphyListAdapter(
 
                 mainViewModel.callAdapterDataReset(data)
 
-                checkFavoriteGif(holder = holder, item = item)
+                checkFavoriteGifInRoom(holder = holder, item = item)
             }
         }
 
     }
 
-    //Favorite 눌려있는지 확인
-    private suspend fun checkFavoriteGif(holder: GiphyListViewHolder, item: Data): Boolean {
+    private fun observeViewModel(holder: GiphyListViewHolder, item: Data){
+        mainViewModel.favoriteGifList.observe(fragment, Observer {
+            if (checkFavoriteGifInList(item = item)) holder.binding.heartBtn.setImageResource(R.drawable.heart)
+            else holder.binding.heartBtn.setImageResource(R.drawable.heart_thin)
+
+        })
+    }
+
+    //Favorite 눌려있는지 확인 (ViewModel list 에서)
+    private fun checkFavoriteGifInList(item: Data) : Boolean{
+        var checkId = false
+        mainViewModel.favoriteGifList.value?.forEach {
+            if (it.gifId == item.id) checkId = true
+        }
+        return checkId
+    }
+
+    //Favorite 눌려있는지 확인 (Room DB 에서)
+    private suspend fun checkFavoriteGifInRoom(holder: GiphyListViewHolder, item: Data): Boolean {
         val favoriteState = CoroutineScope(Dispatchers.Main).async {
             val gifList = withContext(Dispatchers.IO) {
                 db!!.favoriteGifDao().favoriteGifSelect(item.id)
