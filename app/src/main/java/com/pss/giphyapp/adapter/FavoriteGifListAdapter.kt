@@ -46,28 +46,10 @@ class FavoriteGifListAdapter(
     }
 
     override fun onBindViewHolder(holder: FavoriteGifListViewHolder, position: Int) {
-             val item = getItem(position)
-             if (item != null) {
-                 holder.binding.heartBtn.setImageResource(R.drawable.heart)
-                 GlideApp.with(context).asGif().load(item.url)
-                     .into(holder.binding.gifImgView)
-
-                 holder.binding.heartBtn.setOnClickListener {
-                     CoroutineScope(Dispatchers.Main).launch {
-                         withContext(Dispatchers.IO) {
-                             deleteFavoriteGif(id = item.gifId)
-                         }
-
-                         val data = withContext(Dispatchers.IO) {
-                             db!!.favoriteGifDao().favoriteGifAllSelectAndGet()
-                         }
-
-                         mainViewModel.callAdapterDataReset(data)
-                         holder.binding.heartBtn.setImageResource(R.drawable.heart_thin)
-                     }
-                 }
-
-             }
+        val item = getItem(position) ?: return
+        holder.bind(item)
+        holder.binding.heartBtn.setImageResource(R.drawable.heart)
+        GlideApp.with(context).asGif().load(item.url).into(holder.binding.gifImgView)
     }
 
     //favorite 삭제
@@ -76,10 +58,28 @@ class FavoriteGifListAdapter(
             .favoriteGifDelete(id)
     }
 
-    inner class FavoriteGifListViewHolder(val binding: GiphyListItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    //heart button 클릭 시
+    private fun heartBtnClick(item: FavoriteGif, binding: GiphyListItemBinding) {
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                deleteFavoriteGif(id = item.gifId)
+            }
 
+            val data = withContext(Dispatchers.IO) {
+                db!!.favoriteGifDao().favoriteGifAllSelectAndGet()
+            }
+
+            mainViewModel.callAdapterDataReset(data)
+            binding.heartBtn.setImageResource(R.drawable.heart_thin)
+        }
     }
 
-
+    inner class FavoriteGifListViewHolder(val binding: GiphyListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: FavoriteGif) {
+            binding.heartBtn.setOnClickListener {
+                heartBtnClick(item, binding)
+            }
+        }
+    }
 }
