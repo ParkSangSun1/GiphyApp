@@ -21,7 +21,6 @@ class MainDataSource(
             val resultsDataList = mutableListOf<Data>()
             val resultsData = results.body()?.data ?: emptyList()
             resultsDataList.addAll(resultsData)
-            Log.d("로그","페이징 : $page, $results")
             LoadResult.Page(data = resultsData, nextKey = page.plus(1), prevKey = if (page == 1) null else -1)
         }
         catch (e: Exception) {

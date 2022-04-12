@@ -21,10 +21,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     private fun initRecyclerView(){
         giphyListAdapter = GiphyListAdapter(requireContext(), this, mainViewModel)
-        binding.recyclerView.adapter = giphyListAdapter
-        binding.recyclerView.showGrid(requireContext())
-        binding.recyclerView.setHasFixedSize(true)
-
+        binding.recyclerView.apply {
+            adapter = giphyListAdapter
+            showGrid(requireContext())
+            setHasFixedSize(true)
+        }
 
         lifecycleScope.launch {
             mainViewModel.getGiphyGifs().collect {
@@ -32,11 +33,4 @@ class MainFragment : BaseFragment<FragmentMainBinding>(R.layout.fragment_main) {
             }
         }
     }
-
-/*    private fun observeViewModel(){
-        mainViewModel.favoriteGifList.observe(this, Observer{
-            Log.d("로그","데이터 변동 : $it")
-            giphyListAdapter.submitData(it)
-        })
-    }*/
 }
